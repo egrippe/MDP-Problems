@@ -1,7 +1,7 @@
 function new_s = next_state(s,a)
 % Compute the next state of the game.
 
-assert(1<=s && s<=256)
+assert(1<=s && s<=256 && 1<=a && a<=5)
 
 % decode states of player and police
 s_player = floor((s-1) / 16);

@@ -1,7 +1,7 @@
 function plot_state(s)
 % Plot the state of the game.
 
-assert(1<=s&&s<=256)
+assert(1<=s && s<=256)
 
 % decode states of player and police
 s_player = floor((s-1) / 16);
