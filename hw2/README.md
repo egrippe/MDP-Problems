@@ -1,0 +1,1 @@
+![problem](lab2.pdf)
