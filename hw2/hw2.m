@@ -28,6 +28,9 @@ N = 2e5;         % number of iterations
 Q = zeros(S,A);  % Q-function, initialized to 0
 V = zeros(S,N);  % V-function
 
+% to keep track on the number of updates of each (s,a) pair.
+num_updates = zeros(S,A);  
+
 s = 16;          % initial state (player:(1,1) police:(4,4))
 lambda = 0.8;    % discount factor
 
@@ -61,10 +64,13 @@ for n = 1:N
     % 2: compute next state
     new_s = next_state(s,a);
     
-    alpha = S / (S + n);  % learning rate  
+    alpha = 1 / (num_updates(s,a)^(2/3) + 1);  % learning rate  
     
     % update Q
     Q(s,a) = Q(s,a) + alpha*(r(s) + lambda*max(Q(new_s,:)) - Q(s,a));
+    
+    num_updates(s,a) = num_updates(s,a) + 1;
+    
     V(:,n) = max(Q,[],2);
     
     s = new_s;
@@ -75,7 +81,7 @@ end
 figure
 states = randsample(S,30);
 
-subplot(1,2,1)
+%subplot(1,2,1)
 plot(V(states,:)')
 title('Q-learning convergence for 30 random states')
 xlabel('Iteration')
@@ -90,25 +96,32 @@ s = zeros(T,1);
 s(1) = 16;  % starting state
 
 for t = 1:T-1
-    
     % choose player action
     [~, a] = max(Q(s(t),:));
-    
     % compute next state
     s(t+1) = next_state(s(t),a);
-    
 end
 
-% plot simulation
+% plot simulation results
 figure
 for t = 1:T
-    
     subplot(4,5,t)
     plot_state(s(t))
     title(['T=', num2str(t)])
-    
 end
 
 
-%% 
+%% Learn with SARSA
+
+N = 2e5;         % number of iterations
+Q = zeros(S,A);  % Q-function, initialized to 0
+V = zeros(S,N);  % V-function
+
+% to keep track on the number of updates of each (s,a) pair.
+num_updates = zeros(S,A);  
+
+s = 16;          % initial state (player:(1,1) police:(4,4))
+lambda = 0.8;    % discount factor
+
+
 
