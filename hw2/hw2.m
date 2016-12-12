@@ -24,7 +24,7 @@ end
 
 %% Learn Q-function
 
-N = 2e5;         % number of iterations
+N = 1e6;         % number of iterations
 Q = zeros(S,A);  % Q-function, initialized to 0
 V = zeros(S,N);  % V-function
 
@@ -62,18 +62,18 @@ for n = 1:N
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % 2: compute next state
-    new_s = next_state(s,a);
+    next_s = next_state(s,a);
     
     alpha = 1 / (num_updates(s,a)^(2/3) + 1);  % learning rate  
     
     % update Q
-    Q(s,a) = Q(s,a) + alpha*(r(s) + lambda*max(Q(new_s,:)) - Q(s,a));
+    Q(s,a) = Q(s,a) + alpha*(r(s) + lambda*max(Q(next_s,:)) - Q(s,a));
     
     num_updates(s,a) = num_updates(s,a) + 1;
     
     V(:,n) = max(Q,[],2);
     
-    s = new_s;
+    s = next_s;
 end
 
 %% Plot convergence
@@ -113,7 +113,7 @@ end
 
 %% Learn with SARSA
 
-N = 2e5;         % number of iterations
+N = 1e6;         % number of iterations
 Q = zeros(S,A);  % Q-function, initialized to 0
 V = zeros(S,N);  % V-function
 
@@ -122,6 +122,45 @@ num_updates = zeros(S,A);
 
 s = 16;          % initial state (player:(1,1) police:(4,4))
 lambda = 0.8;    % discount factor
+e = 0.1;
 
+for n = 1:N
+    
+    % decode states of player and police
+    s_player = floor((s-1) / 16);
+    
+    % decode coordinates of player 
+    x_player = mod(s_player, 4);
+    y_player = floor(s_player / 4);
+    
+    % 1: select action according to e-greedy policy
+    a_n = select_action_e_greedy(s, Q, e);
+    
+    % 2: compute next state
+    s_n1 = next_state(s, a_n);
+    
+    a_n1 = select_action_e_greedy(s_n1, Q, e);
+    
+    alpha = 1 / (num_updates(s,a_n)^(2/3) + 1);  % learning rate  
+    
+    % update Q
+    Q(s,a_n) = Q(s,a_n) + alpha*(r(s) + lambda*(Q(s_n1, a_n1)) - Q(s, a_n));
+    
+    num_updates(s,a_n) = num_updates(s,a_n) + 1;
+    
+    V(:,n) = max(Q,[],2);
+    
+    s = s_n1;
+end
 
+%% Plot convergence
+
+figure
+states = randsample(S,30);
+
+%subplot(1,2,1)
+plot(V(states,:)')
+title('SARSA-learning convergence for 30 random states')
+xlabel('Iteration')
+ylabel('Value')
 
