@@ -34,6 +34,7 @@ new_y_player = y_player + moves(a,2);
 new_x_police = x_police + moves(a_police,1);
 new_y_police = y_police + moves(a_police,2);
 
+% encode state
 new_s = (new_x_player + new_y_player*4) * 16 ...
       + (new_x_police + new_y_police*4) ...
       + 1;
