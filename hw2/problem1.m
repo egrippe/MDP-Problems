@@ -1,8 +1,9 @@
 %% Homework 2: Bank Robbing
 close all
-clear
+clearvars
 
 %% Initialize Model
+
 S = 256;  % number of states
 A = 5;    % number of actions
 
@@ -62,7 +63,7 @@ for n = 1:N
     num_updates(s,a) = num_updates(s,a) + 1;
     
     % store value function for each state every M iteration
-    if mod(n,M)==0
+    if mod(n,M) == 0
         for s = 1:S
             V(s,n/M) = max(Q(s, possible_actions(s,:)));
         end
@@ -156,7 +157,7 @@ for n = 1:N
     
     num_updates(s,a_n) = num_updates(s,a_n) + 1;
     
-        % store value function for each state every M iteration
+    % store value function for each state every M iteration
     if mod(n,M)==0
         for s = 1:S
             V(s,n/M) = max(Q(s, possible_actions(s,:)));
